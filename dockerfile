@@ -2,14 +2,14 @@
 FROM python:3.10-slim
 
 # Establece el directorio de trabajo dentro del contenedor
-WORKDIR /app
+WORKDIR /
 
 # Copia el código y el archivo .env
 COPY . .
 
 # Instala las dependencias
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt --use-deprecated=legacy-resolver
+    pip install --no-cache-dir -r requirements.txt
 
 # Ejecuta las migraciones (si usas Alembic)
 # RUN alembic upgrade head
