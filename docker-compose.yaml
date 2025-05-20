@@ -1,0 +1,20 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web2
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
+    environment:
+      DB_HOST: 34.46.147.105
+      DB_USER: postgres
+      DB_PASSWORD: web2
+      DB_PORT: 5432
+      DB_ENGINE: postgresql
+      DB_NAME: fastapi-db
+
+networks:
+  app-network:

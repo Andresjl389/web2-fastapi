@@ -1,27 +1,23 @@
-# Usa una imagen base de Python más liviana y actual
 FROM python:3.10-slim
 
-# Establece el directorio de trabajo dentro del contenedor (usa /app en lugar de /)
+# Instala bash y curl usando APT (no APK)
+RUN apt-get update && apt-get install -y bash curl && rm -rf /var/lib/apt/lists/*
+
+# Descarga wait-for-it
+RUN curl -sSL https://github.com/vishnubob/wait-for-it/raw/master/wait-for-it.sh -o /wait-for-it.sh && \
+    chmod +x /wait-for-it.sh
+
 WORKDIR /app
 
-# Copia los archivos del proyecto
+COPY requirements.txt .
+
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+
 COPY . .
 
-# Instala las dependencias
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Verifica la estructura de directorios y archivos
-RUN ls -la
-
-# Expone el puerto que usa Cloud Run
-EXPOSE 8080
-
-# Establece la variable de entorno PORT explícitamente
-ENV PORT=8080
-
-# Configuración de Python para encontrar módulos
 ENV PYTHONPATH=/app
 
-# Comando para ejecutar el servidor de FastAPI con uvicorn y tiempo de inicio extendido
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--log-level", "debug", "--timeout-keep-alive", "120"]
+EXPOSE 8080
+ENV PORT=8080
+
+CMD ["/wait-for-it.sh", "db:5432", "--", "sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8080"]

@@ -1,5 +1,5 @@
-import asyncio
-from contextlib import asynccontextmanager
+# import asyncio
+# from contextlib import asynccontextmanager
 from fastapi import FastAPI
 # from rabbitmq.producer import send_message
 # from rabbitmq.consumer import consume
